@@ -42,8 +42,10 @@ export default class App extends Component<Props> {
       //     console.log(e)  
       //     // alert("点击了");  
       // }); 
-      let data=["file:///storage/emulated/0/.yjj/00dedac1bee50a7173af437910155ab3.jpg","file:///storage/emulated/0/.yjj/051f006e-23fe-4d84-adbe-a60640ef5b72.jpg"
-      ,"file:///storage/emulated/0/.yjj/978de902d8d191cd77b0935f8d6af7a4.png","file:///storage/emulated/0/.yjj/31753e9d-b6b3-4817-b0f8-60fba00a3a80.jpg"]
+      let data=["http://image.kjt.com/mkt/Original/2017/0718/59866dbd-3227-4664-9217-2b3587e7c0c0.jpg",
+      "http://image.kjt.com/mkt/Original/2017/0718/ef3d5be0-0fcc-4b14-9e7e-6aa74786701e.jpg",
+      "http://image.kjt.com/g1/M00/00/30/CgoJzVqoyFKAUbVSAAExNNqZBC8537.jpg",
+      "http://image.kjt.com/g1/M00/00/48/CgoJzVqvbVSAdmJ5AAEB-mTiJe4982.jpg"]
       for(i=0;i<5;i++){
         this.state.dataList.push(data);
       }
@@ -70,8 +72,7 @@ export default class App extends Component<Props> {
           // this.refs["hvView"].changeCurrent(["file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg","file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg"])
           // this.setState({dataList:[["file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg","file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg"]
           // ,["file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg","file:///storage/emulated/0/.yjj/596f41ab3cacfb409b7f25546885c6f9.jpg"]],index:0})
-          this.refs["hvView"].changeCurrent(["file:///storage/emulated/0/.yjj/978de902d8d191cd77b0935f8d6af7a4.png","file:///storage/emulated/0/.yjj/31753e9d-b6b3-4817-b0f8-60fba00a3a80.jpg"])
-        this.forceUpdate();
+          this.refs["hvView"].changeCurrent(["http://image.kjt.com/neg/P450/3714f8ae-14a3-4771-8e4d-a9d4dd1bf824.jpg","http://image.kjt.com/neg/P450/a68124f7-45a0-4254-bf1a-19ea5ea387bb.jpg"])
         }
           }>
           <View ><Text style={styles.welcome}>点我</Text></View></TouchableWithoutFeedback>

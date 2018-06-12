@@ -4,28 +4,29 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class HorizonVerticalView extends MyViewPager {
+public class HorizonVerticalView2 extends MyViewPager {
 
     private PagerOnClickListener pagerOnClickListener;
     private int currentIndex = 0;
-    private ArrayList<ItemFragment> fragmentArrayList;
+    private ArrayList<ItemFragment2> fragmentArrayList;
     private MyAdapter myAdapter;
     private int externalLocationIndex;
     private CurrentLocationOnClickListener currentLocationOnClickListener;
     private boolean isLoaclImg;
 
 
-    public HorizonVerticalView(Context context) {
+    public HorizonVerticalView2(Context context) {
         this(context, null);
     }
 
-    public HorizonVerticalView(Context context, AttributeSet attrs) {
+    public HorizonVerticalView2(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -33,22 +34,18 @@ public class HorizonVerticalView extends MyViewPager {
         this.isLoaclImg = isLoaclImg;
         fragmentArrayList = new ArrayList<>();
         for (ArrayList<String> item : datas) {
-
-            ItemFragment itemFragment = new ItemFragment();
-            itemFragment.setData(isLoaclImg,item);
-            if (currentLocationOnClickListener != null) {
-                itemFragment.setCurrentLocationOnClickListener(currentLocationOnClickListener);
-            }
-            if (pagerOnClickListener != null) {
-                itemFragment.setPagerOnClickListener(pagerOnClickListener, currentIndex);
-            }
+            //            Bundle bundle = new Bundle();
+            //            bundle.putStringArrayList("IMAGE_DATA", item);
+            //            bundle.putBoolean("IS_LOACL_IMG", isLoaclImg);
+            ItemFragment2 itemFragment = new ItemFragment2();
+            itemFragment.setData(isLoaclImg, item);
+//            itemFragment.setArguments(bundle);
             fragmentArrayList.add(itemFragment);
         }
-        myAdapter = new MyAdapter(fragmentManager, fragmentArrayList);
+        myAdapter = new MyAdapter(fragmentManager, datas/* fragmentArrayList*/);
         this.setAdapter(myAdapter);
         this.setCurrentItem(currentItem);
         this.setOffscreenPageLimit(datas.size());
-//        this.setOffscreenPageLimit(2);
         externalLocationIndex = currentItem;
         addOnPageChangeListener(new OnPageChangeListener() {
             @Override
@@ -58,7 +55,7 @@ public class HorizonVerticalView extends MyViewPager {
             @Override
             public void onPageSelected(int position) {
                 externalLocationIndex = position;
-                ItemFragment itemFragment = (ItemFragment) myAdapter.getItem(position);
+                ItemFragment2 itemFragment = (ItemFragment2) myAdapter.getItem(position);
                 itemFragment.setExternalLocationIndex(position);
                 if (currentLocationOnClickListener != null) {
                     currentLocationOnClickListener.currentLocation(externalLocationIndex, fragmentArrayList.get(externalLocationIndex).getCurrentImgLocation());
@@ -75,58 +72,52 @@ public class HorizonVerticalView extends MyViewPager {
 
 
     private class MyAdapter extends FragmentPagerAdapter {
-        private ArrayList<ItemFragment> fragmentList;
-        private Context context;
+        private ArrayList<ArrayList<String>> datas;
+        private ArrayList<String> updataDatas;
 
-        public MyAdapter(FragmentManager fm) {
+        public MyAdapter(FragmentManager fm, ArrayList<ArrayList<String>> datas) {
             super(fm);
-
-        }
-
-        public MyAdapter(FragmentManager fm, ArrayList<ItemFragment> fragmentList) {
-            super(fm);
-            this.fragmentList = fragmentList;
+            this.datas = datas;
         }
 
         public void updataData(int index, ArrayList<String> data) {
-//            try {
-                ItemFragment itemFragment = fragmentList.get(index);
-                ItemFragment.MyAdapter myAdapter = itemFragment.getMyAdapter();
-                myAdapter.updata(data);
-//                Bundle bundle = new Bundle();
-//                bundle.putStringArrayList("IMAGE_DATA", data);
-//                itemFragment.setArguments(bundle);
-            itemFragment.setData(isLoaclImg,data);
-//            }catch (Exception e){
-//
-//            }
+            this.updataDatas = data;
+            notifyDataSetChanged();
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragmentList.get(position);
+            ItemFragment2 itemFragment = new ItemFragment2();
+            itemFragment.setData(isLoaclImg, datas.get(position));
+            return itemFragment;
         }
 
         @Override
         public int getCount() {
-            return fragmentList.size();
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return super.getItemPosition(object);
+            return datas.size();
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            ItemFragment2 itemFragment = (ItemFragment2) super.instantiateItem(container, position);
             if (position == 0) {
-                ItemFragment itemFragment = (ItemFragment) fragmentList.get(position);
                 itemFragment.setExternalLocationIndex(position);
                 currentLocationOnClickListener.currentLocation(externalLocationIndex, fragmentArrayList.get(position).getCurrentImgLocation());
             }
-//            return super.instantiateItem(container, position);
-            return super.instantiateItem(container, position);
+            if (updataDatas != null) {
+                itemFragment.setData(isLoaclImg, updataDatas);
+                updataDatas = null;
+            } else {
+                itemFragment.setData(isLoaclImg, datas.get(position));
+            }
+            return itemFragment;
         }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return PagerAdapter.POSITION_NONE;
+        }
+
 
     }
 
@@ -171,18 +162,4 @@ public class HorizonVerticalView extends MyViewPager {
     public int getExternalLocationIndex() {
         return externalLocationIndex;
     }
-//    @Override
-//    public void requestLayout() {
-//        super.requestLayout();
-//        post(measureAndLayout);
-//    }
-//        private final Runnable measureAndLayout = new Runnable() {
-//        @Override
-//        public void run() {
-//            measure(
-//                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-//                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-//            layout(getLeft(), getTop(), getRight(), getBottom());
-//        }
-//    };
 }

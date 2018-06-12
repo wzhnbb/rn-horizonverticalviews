@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
-import android.view.View;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +18,8 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
     private HorizonVerticalView horizonVerticalView;
     private TextView pageIndex;
     private ArrayList<ArrayList<String>> datas;
-    private  FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
+
     public HasIndicatorsHorizonVerticalView(Context context) {
         this(context, null);
     }
@@ -30,8 +31,8 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
     public HasIndicatorsHorizonVerticalView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.has_indicators_view_layout, this);
-        pageIndex = (TextView)findViewById(R.id.pager_index);
-        horizonVerticalView =(HorizonVerticalView) this.findViewById(R.id.horizontal_scrollview);
+        pageIndex = (TextView) findViewById(R.id.pager_index);
+        horizonVerticalView = (HorizonVerticalView) this.findViewById(R.id.horizontal_scrollview);
     }
 
     public HorizonVerticalView getHorizonVerticalView() {
@@ -60,14 +61,15 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
         horizonVerticalView.initView(fragmentManager, datas, currentItem, isLoaclImg);
         pageIndex.setText(currentItem + 1 + "/" + datas.size());
     }
-//    @Override
+
+    //    @Override
 //    protected void onAttachedToWindow() {
 //        super.onAttachedToWindow();
 ////        if (mRemoveClippedSubviews) {
 ////            updateClippingRect();
 ////        }
 //    }
-    public  void  removeFragment(){
+    public void removeFragment() {
         Fragment pdfFragment = (Fragment) fragmentManager.findFragmentByTag("");
     }
 //    @Override
@@ -85,8 +87,4 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
 //            layout(getLeft(), getTop(), getRight(), getBottom());
 //        }
 //    };
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-       super.onMeasure(widthMeasureSpec,heightMeasureSpec);
-    }
 }

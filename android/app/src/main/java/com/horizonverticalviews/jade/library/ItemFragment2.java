@@ -25,7 +25,7 @@ import java.util.List;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class ItemFragment extends Fragment {
+public class ItemFragment2 extends Fragment {
     private HorizonVerticalView.PagerOnClickListener pagerOnClickListener;
     private List<View> loadViewList = new ArrayList<>();
     private int mScreenWidth;
@@ -37,7 +37,8 @@ public class ItemFragment extends Fragment {
     private boolean isLoaclImg;
     private VerticalViewPager viewPager;
     private RadioGroup radioGroup;
-    public ArrayList<String> imageData;
+
+    private ArrayList<String> imageData;
 
     public void setExternalLocationIndex(int externalLocationIndex) {
         this.externalLocationIndex = externalLocationIndex;
@@ -53,12 +54,14 @@ public class ItemFragment extends Fragment {
     }
 
     public void setData(boolean isLoaclImg, ArrayList<String> imageData) {
+        Log.i("TAG", "FRAGMENTsetData: ");
         this.isLoaclImg = isLoaclImg;
         this.imageData = imageData;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i("TAG", "FRAGMENTonCreateView: ");
         View inflate = inflater.inflate(R.layout.fragment_item_list, null);
         viewPager = (VerticalViewPager) inflate.findViewById(R.id.list);
         radioGroup = (RadioGroup) inflate.findViewById(R.id.radiogroup);
@@ -66,9 +69,9 @@ public class ItemFragment extends Fragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
-//        Bundle bundle = getArguments();
-//        ArrayList<String> imageData = bundle.getStringArrayList("IMAGE_DATA");
-//        isLoaclImg = bundle.getBoolean("IS_LOACLI_MG");
+        /*Bundle bundle = getArguments();
+        ArrayList<String> imageData = bundle.getStringArrayList("IMAGE_DATA");
+        isLoaclImg = bundle.getBoolean("IS_LOACL_IMG");*/
         myAdapter = new MyAdapter(imageData);
         viewPager.setAdapter(myAdapter);
         viewPager.setOffscreenPageLimit(imageData.size());
@@ -124,7 +127,6 @@ public class ItemFragment extends Fragment {
         private List<String> data;
 
         public MyAdapter(ArrayList<String> data) {
-            Log.i("TAG", "MyAdapter: " + data.size());
             mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.data = data;
         }
@@ -157,8 +159,6 @@ public class ItemFragment extends Fragment {
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            Log.i("TAG", "destroyItem: " + position);
-//            container.removeAllViews();
             container.removeView(loadViewList.get(position));
         }
 
@@ -183,12 +183,10 @@ public class ItemFragment extends Fragment {
             } else {
                 Glide.with(getActivity()).load(imageUrl).into(imageView);
             }
-            Log.i("TAG", "instantiateItem: " + position + ":" + imageUrl);
             loadViewList.add(view);
             container.addView(view);
             return view;
         }
-
     }
 
     private void generateIndicator(int size) {
@@ -210,5 +208,4 @@ public class ItemFragment extends Fragment {
             radioGroup.check(0);
         }
     }
-
 }

@@ -19,6 +19,8 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
     private TextView pageIndex;
     private ArrayList<ArrayList<String>> datas;
     private FragmentManager fragmentManager;
+    private  ContactInterface  myCallBack;
+
 
     public HasIndicatorsHorizonVerticalView(Context context) {
         this(context, null);
@@ -27,6 +29,7 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
     public HasIndicatorsHorizonVerticalView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
 
     public HasIndicatorsHorizonVerticalView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -39,9 +42,14 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
         return horizonVerticalView;
     }
 
-    public void changeCurrent(ArrayList<String> columns) {
+
+    public interface ContactInterface  {
+        void updateWindow();
+    }
+    public void changeCurrent(ArrayList<String> columns,ContactInterface   myCallBack) {//,myCallBack  mycallback
         horizonVerticalView.changeCurrent(columns);
         datas.set(horizonVerticalView.getExternalLocationIndex(), columns);
+        myCallBack.updateWindow();
     }
 
     public void initView(FragmentManager fragmentManager, final ArrayList<ArrayList<String>> datas, int currentItem, boolean isLoaclImg) {
@@ -72,19 +80,4 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
     public void removeFragment() {
         Fragment pdfFragment = (Fragment) fragmentManager.findFragmentByTag("");
     }
-//    @Override
-//    public void requestLayout() {
-//        super.requestLayout();
-//        post(measureAndLayout);
-//    }
-//
-//    private final Runnable measureAndLayout = new Runnable() {
-//        @Override
-//        public void run() {
-//            measure(
-//                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-//                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-//            layout(getLeft(), getTop(), getRight(), getBottom());
-//        }
-//    };
 }

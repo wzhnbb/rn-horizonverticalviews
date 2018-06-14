@@ -3,6 +3,7 @@ package com.horizonverticalviews.jade.library;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -35,7 +36,6 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
     private int currIndex = 0;
     private int ScrollTimes = 0;
     private ThemedReactContext reactContexts;
-
     @Override
     public String getName() {
         return "RCTAndroidHorizonVerticalView";
@@ -121,13 +121,23 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
     }
 
     @Override
-    public void receiveCommand(HasIndicatorsHorizonVerticalView view, int commandId, @Nullable ReadableArray args) {
+    public void receiveCommand( final HasIndicatorsHorizonVerticalView view, int commandId, @Nullable ReadableArray args) {
         switch (commandId) {
             case 1:
                 ArrayList datas = args.toArrayList();
-                view.changeCurrent(datas);
+                view.changeCurrent(datas,new HasIndicatorsHorizonVerticalView.ContactInterface(){
+                    @Override
+                    public void updateWindow() {
+                        Window w = reactContexts.getCurrentActivity().getWindow();
+                        w.setLayout(1000+currIndex,1000);
+                    }
+                });
+//                VerticalViewPager v = (VerticalViewPager)view.findViewById(R.id.list);
+//                v.requestLayout();
 //                ReactHorizonVerticalView.super.onAfterUpdateTransaction(rootView);
+
 //                WindowManager m =   reactContexts.getCurrentActivity().getWindowManager();
+//                m.updateViewLayout(view, new WindowManager.LayoutParams());
                 break;
             case 2:
                 //z暂时不添加自动播放功能

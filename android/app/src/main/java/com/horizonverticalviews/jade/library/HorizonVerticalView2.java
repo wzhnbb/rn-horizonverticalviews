@@ -15,7 +15,7 @@ public class HorizonVerticalView2 extends MyViewPager {
 
     private PagerOnClickListener pagerOnClickListener;
     private int currentIndex = 0;
-    private ArrayList<ItemFragment2> fragmentArrayList;
+    private ArrayList<ItemFragment> fragmentArrayList;
     private MyAdapter myAdapter;
     private int externalLocationIndex;
     private CurrentLocationOnClickListener currentLocationOnClickListener;
@@ -37,7 +37,7 @@ public class HorizonVerticalView2 extends MyViewPager {
             //            Bundle bundle = new Bundle();
             //            bundle.putStringArrayList("IMAGE_DATA", item);
             //            bundle.putBoolean("IS_LOACL_IMG", isLoaclImg);
-            ItemFragment2 itemFragment = new ItemFragment2();
+            ItemFragment itemFragment = new ItemFragment();
             itemFragment.setData(isLoaclImg, item);
 //            itemFragment.setArguments(bundle);
             fragmentArrayList.add(itemFragment);
@@ -45,7 +45,6 @@ public class HorizonVerticalView2 extends MyViewPager {
         myAdapter = new MyAdapter(fragmentManager, datas/* fragmentArrayList*/);
         this.setAdapter(myAdapter);
         this.setCurrentItem(currentItem);
-        this.setOffscreenPageLimit(datas.size());
         externalLocationIndex = currentItem;
         addOnPageChangeListener(new OnPageChangeListener() {
             @Override
@@ -55,7 +54,7 @@ public class HorizonVerticalView2 extends MyViewPager {
             @Override
             public void onPageSelected(int position) {
                 externalLocationIndex = position;
-                ItemFragment2 itemFragment = (ItemFragment2) myAdapter.getItem(position);
+                ItemFragment itemFragment = (ItemFragment) myAdapter.getItem(position);
                 itemFragment.setExternalLocationIndex(position);
                 if (currentLocationOnClickListener != null) {
                     currentLocationOnClickListener.currentLocation(externalLocationIndex, fragmentArrayList.get(externalLocationIndex).getCurrentImgLocation());
@@ -87,7 +86,7 @@ public class HorizonVerticalView2 extends MyViewPager {
 
         @Override
         public Fragment getItem(int position) {
-            ItemFragment2 itemFragment = new ItemFragment2();
+            ItemFragment itemFragment = new ItemFragment();
             itemFragment.setData(isLoaclImg, datas.get(position));
             return itemFragment;
         }
@@ -99,7 +98,7 @@ public class HorizonVerticalView2 extends MyViewPager {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ItemFragment2 itemFragment = (ItemFragment2) super.instantiateItem(container, position);
+            ItemFragment itemFragment = (ItemFragment) super.instantiateItem(container, position);
             if (position == 0) {
                 itemFragment.setExternalLocationIndex(position);
                 currentLocationOnClickListener.currentLocation(externalLocationIndex, fragmentArrayList.get(position).getCurrentImgLocation());

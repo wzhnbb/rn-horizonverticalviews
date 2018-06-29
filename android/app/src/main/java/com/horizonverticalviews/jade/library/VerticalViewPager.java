@@ -86,27 +86,27 @@ public class VerticalViewPager extends ViewPager {
         }
         return false;
     }
-    @Override
-    public void requestLayout() {
-
-        super.requestLayout();
-//        if (getWidth() > 0 && getHeight() > 0) {
-//            int w = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
-//            int h = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY);
-//            measure(w, h);
-//            layout(getPaddingLeft() + getLeft(), getPaddingTop() + getTop(), getWidth() + getPaddingLeft() + getLeft(), getHeight() + getPaddingTop() + getTop());
+//    @Override
+//    public void requestLayout() {
+//
+//        super.requestLayout();
+////        if (getWidth() > 0 && getHeight() > 0) {
+////            int w = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
+////            int h = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY);
+////            measure(w, h);
+////            layout(getPaddingLeft() + getLeft(), getPaddingTop() + getTop(), getWidth() + getPaddingLeft() + getLeft(), getHeight() + getPaddingTop() + getTop());
+////        }
+//        post(measureAndLayout);
+////        forceLayout();
+//    }
+//
+//    private final Runnable measureAndLayout = new Runnable() {
+//        @Override
+//        public void run() {
+//            measure(
+//                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
+//                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+//            layout(getLeft(), getTop(), getRight(), getBottom());
 //        }
-        post(measureAndLayout);
-//        forceLayout();
-    }
-
-    private final Runnable measureAndLayout = new Runnable() {
-        @Override
-        public void run() {
-            measure(
-                    MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
-            layout(getLeft(), getTop(), getRight(), getBottom());
-        }
-    };
+//    };
 }

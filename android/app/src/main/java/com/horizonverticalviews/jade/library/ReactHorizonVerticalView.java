@@ -1,12 +1,17 @@
 package com.horizonverticalviews.jade.library;
 
+import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactFragmentActivity;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -32,10 +37,15 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
     private HasIndicatorsHorizonVerticalView rootView = null;
     private FragmentManager fragmentManager = null;
     private ArrayList list = null;
-    private int Index = 0;
+    private ArrayList<ArrayList<String>>tempList = null;
+    private int Index = -1;
     private int currIndex = 0;
     private int ScrollTimes = 0;
     private ThemedReactContext reactContexts;
+    private Activity activity;
+    private  int ChangeTimes = 0;
+    private  boolean isNeedLoad = false;
+    private RadioGroup radioGroup;
     @Override
     public String getName() {
         return "RCTAndroidHorizonVerticalView";
@@ -44,21 +54,21 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
     @Override
     protected HasIndicatorsHorizonVerticalView createViewInstance(final ThemedReactContext reactContext) {
 //        rootView = (HasIndicatorsHorizonVerticalView)LayoutInflater.from(reactContext).inflate(R.layout.has_indicators_view_layout,null);
-        rootView = new HasIndicatorsHorizonVerticalView(reactContext);
+        rootView = new HasIndicatorsHorizonVerticalView(reactContext.getCurrentActivity());
         reactContexts = reactContext;
+        isNeedLoad = true;
+        list = null;
+        activity = reactContexts.getCurrentActivity();
+
         return rootView;
     }
-
     @ReactProp(name = "dataList", customType = "ReadableArray")
     public void setDataList(final HasIndicatorsHorizonVerticalView contentx, ReadableArray dataList) {
-
         final TextView pageIndex = (TextView) contentx.findViewById(R.id.pager_index);
+//        radioGroup = (RadioGroup) contentx.findViewById(R.id.radiogroup);
         list = dataList.toArrayList();
-        FragmentActivity activity = (FragmentActivity) reactContexts.getCurrentActivity();
-        if (fragmentManager == null) {
-            fragmentManager = activity.getSupportFragmentManager();
-        }
-        rootView.getHorizonVerticalView().setPagerOnClickListener(new HorizonVerticalView.PagerOnClickListener() {
+        tempList = list;
+        rootView.getHorizonVerticalView().setPagerOnClickListener(new HorizonVerticalView3.PagerOnClickListener() {
             @Override
             public void onPress(View v, int externalLocation, int innerLocation) {
                 //监听点击事件
@@ -67,11 +77,12 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
                 sendEvent(reactContexts, "onPagePress", map);
             }
         });
-        rootView.getHorizonVerticalView().setCurrentLocationOnClickListener(new HorizonVerticalView.CurrentLocationOnClickListener() {
+        rootView.getHorizonVerticalView().setCurrentLocationOnClickListener(new HorizonVerticalView3.CurrentLocationOnClickListener() {
             @Override
             public void currentLocation(int externalLocation, int innerLocation) {
                 //监听滑动事件
                 //执行事件
+//                radioGroup.check(innerLocation);
                 if (currIndex != externalLocation && ScrollTimes > 0) {
                     WritableMap map = Arguments.createMap();
                     map.putString("name", "ontHorizonPageScroll");
@@ -82,21 +93,33 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
                 }
                 if (ScrollTimes == 0) ScrollTimes = 1;
             }
-
             @Override
             public void externalLocation(int externalLocation) {
                 pageIndex.setText(externalLocation + 1 + "/" + list.size());
-//                ReactHorizonVerticalView.super.updateExtraData(rootView,list);
+//               ReactHorizonVerticalView.super.updateExtraData(rootView,list);
+//                if (tempList.get(externalLocation).size() <= 0) {
+//                    radioGroup.setVisibility(View.GONE);
+//                } else {
+//                    radioGroup.setVisibility(View.VISIBLE);
+//                    rootView.generateIndicator(tempList.get(externalLocation).size());
+//                }
                 currIndex = externalLocation;
             }
-        });
-        contentx.initView(fragmentManager, list, Index, false);
+         });
+        if (Index>=0&&isNeedLoad){
+            contentx.initView(list, Index, false);
+            isNeedLoad = false;
+        }
     }
 
     @ReactProp(name = "defaultIndex")
     public void setDefaultIndex(final HasIndicatorsHorizonVerticalView contentx, int defaultIndex) {
         if (Index == 0) currIndex = defaultIndex;
         Index = defaultIndex;
+        if (list!=null&&list.size()>0&&isNeedLoad){
+            contentx.initView(list, defaultIndex, false);
+            isNeedLoad = false;
+        }
     }
 
     //事件发送
@@ -105,21 +128,15 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
                 .emit(eventName, params);
     }
 
-    //
-    @Override
-    public void onDropViewInstance(HasIndicatorsHorizonVerticalView view) {
-        super.onDropViewInstance(view);
-    }
-
     @Override
     public @Nullable
     Map<String, Integer> getCommandsMap() {
         return MapBuilder.of(
                 "changeCurrent", 1,
-                "AotuScroll", 2
+                "AotuScroll", 2,
+                "StopScroll",3
         );
     }
-
     @Override
     public void receiveCommand( final HasIndicatorsHorizonVerticalView view, int commandId, @Nullable ReadableArray args) {
         switch (commandId) {
@@ -128,54 +145,31 @@ public class ReactHorizonVerticalView extends ViewGroupManager<HasIndicatorsHori
                 view.changeCurrent(datas,new HasIndicatorsHorizonVerticalView.ContactInterface(){
                     @Override
                     public void updateWindow() {
+                        int add = 0;
+                        isNeedLoad = false;
+                        if (ChangeTimes%2==0) add=1;else add=-1;
                         Window w = reactContexts.getCurrentActivity().getWindow();
-                        w.setLayout(1000+currIndex,1000);
+                        w.setLayout(DisplayUtil.getScreenWidth(activity)+add,DisplayUtil.getScreenHeight(activity));
+                        ChangeTimes++;
                     }
                 });
-//                VerticalViewPager v = (VerticalViewPager)view.findViewById(R.id.list);
-//                v.requestLayout();
-//                ReactHorizonVerticalView.super.onAfterUpdateTransaction(rootView);
-
-//                WindowManager m =   reactContexts.getCurrentActivity().getWindowManager();
-//                m.updateViewLayout(view, new WindowManager.LayoutParams());
                 break;
-            case 2:
-                //z暂时不添加自动播放功能
+            case 2://开始自动播放 传入值为 间隔时间 （毫秒）
+                ArrayList times = args.toArrayList();
+                if (times!=null&&times.size()>0){
+                    String timeStr = times.get(0).toString();
+                    int time =Integer.parseInt(timeStr);
+                    view.setCarousel(time,true);
+                }
+                break;
+            case 3:
+                view.stopCarousel();
                 break;
         }
     }
 
     @Override
     public boolean needsCustomLayoutForChildren() {
-        return true;
+        return false;
     }
-
-    @Override
-    protected void onAfterUpdateTransaction(HasIndicatorsHorizonVerticalView view) {
-        super.onAfterUpdateTransaction(view);
-    }
-
-
-//    @Override
-//    protected void addEventEmitters(ThemedReactContext reactContext, HasIndicatorsHorizonVerticalView view) {
-//        // Do not register default touch emitter and let WebView implementation handle touches
-//    }
-//    public void onReceiveNativeEvent() {
-//        WritableMap event = Arguments.createMap();
-//        event.putString("message", "MyMessage");
-//
-//        ReactContext reactContext = (ReactContext)rootView.getContext();
-//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-//                rootView.getId(),
-//                "topChange",
-//                event);
-//    }
-
-
-//, final Callback callback
-
-//    @Override
-//    public boolean shouldPromoteGrandchildren() {
-//        return true;
-//    }
 }

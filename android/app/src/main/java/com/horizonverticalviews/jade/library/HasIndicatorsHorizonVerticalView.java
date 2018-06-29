@@ -2,11 +2,11 @@ package com.horizonverticalviews.jade.library;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.horizonverticalviews.R;
@@ -15,13 +15,12 @@ import java.util.ArrayList;
 
 public class HasIndicatorsHorizonVerticalView extends LinearLayout {
 
-    private HorizonVerticalView horizonVerticalView;
+    private HorizonVerticalView3 horizonVerticalView;
     private TextView pageIndex;
     private ArrayList<ArrayList<String>> datas;
-    private FragmentManager fragmentManager;
+    private Context context;
+    private RadioGroup radioGroup;
     private  ContactInterface  myCallBack;
-
-
     public HasIndicatorsHorizonVerticalView(Context context) {
         this(context, null);
     }
@@ -30,54 +29,89 @@ public class HasIndicatorsHorizonVerticalView extends LinearLayout {
         this(context, attrs, 0);
     }
 
-
     public HasIndicatorsHorizonVerticalView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
         inflate(context, R.layout.has_indicators_view_layout, this);
         pageIndex = (TextView) findViewById(R.id.pager_index);
-        horizonVerticalView = (HorizonVerticalView) this.findViewById(R.id.horizontal_scrollview);
+        radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
+        horizonVerticalView =(HorizonVerticalView3) this.findViewById(R.id.horizontal_scrollview);
     }
 
-    public HorizonVerticalView getHorizonVerticalView() {
+    public HorizonVerticalView3 getHorizonVerticalView() {
         return horizonVerticalView;
     }
-
-
     public interface ContactInterface  {
         void updateWindow();
     }
-    public void changeCurrent(ArrayList<String> columns,ContactInterface   myCallBack) {//,myCallBack  mycallback
+    public void changeCurrent(ArrayList<String> columns,ContactInterface   myCallBack) {
         horizonVerticalView.changeCurrent(columns);
-        datas.set(horizonVerticalView.getExternalLocationIndex(), columns);
+        generateIndicator(columns.size());
         myCallBack.updateWindow();
     }
 
-    public void initView(FragmentManager fragmentManager, final ArrayList<ArrayList<String>> datas, int currentItem, boolean isLoaclImg) {
-        this.fragmentManager = fragmentManager;
+    public void setCarousel(int replaceTimes, boolean isCarousel) {
+        horizonVerticalView.setCarousel(replaceTimes, isCarousel);
+    }
+
+    public void stopCarousel() {
+        horizonVerticalView.stopCarousel();
+    }
+
+    public void setPagerOnClickListener(HorizonVerticalView3.PagerOnClickListener pagerOnClickListener) {
+        horizonVerticalView.setPagerOnClickListener(pagerOnClickListener);
+    }
+
+    public void initView(final ArrayList<ArrayList<String>> datas, int currentItem, boolean isLoaclImg) {
         this.datas = datas;
-//        horizonVerticalView.setCurrentLocationOnClickListener(new HorizonVerticalView.CurrentLocationOnClickListener() {
-//            @Override
-//            public void currentLocation(int externalLocation, int innerLocation) {
-//                pageIndex.setText(externalLocation + 1 + "/" + datas.size());
-//            }
-//
-//            @Override
-//            public void externalLocation(int externalLocation) {
-//            }
-//
-//        });
-        horizonVerticalView.initView(fragmentManager, datas, currentItem, isLoaclImg);
+
+        if (datas.get(currentItem).size() <= 0) {
+            radioGroup.setVisibility(View.GONE);
+        } else {
+            radioGroup.setVisibility(View.VISIBLE);
+            generateIndicator(datas.get(currentItem).size());
+        }
+        horizonVerticalView.setCurrentLocationOnClickListener(new HorizonVerticalView3.CurrentLocationOnClickListener() {
+            @Override
+            public void currentLocation(int externalLocation, int innerLocation) {
+                radioGroup.check(innerLocation);
+            }
+
+            @Override
+            public void externalLocation(int externalLocation) {
+                pageIndex.setText(externalLocation + 1 + "/" + datas.size());
+                if (datas.get(externalLocation).size() <= 0) {
+                    radioGroup.setVisibility(View.GONE);
+                } else {
+                    radioGroup.setVisibility(View.VISIBLE);
+                    generateIndicator(datas.get(externalLocation).size());
+                }
+
+            }
+        });
+        horizonVerticalView.initView(context, datas, currentItem, isLoaclImg);
         pageIndex.setText(currentItem + 1 + "/" + datas.size());
     }
 
-    //    @Override
-//    protected void onAttachedToWindow() {
-//        super.onAttachedToWindow();
-////        if (mRemoveClippedSubviews) {
-////            updateClippingRect();
-////        }
-//    }
-    public void removeFragment() {
-        Fragment pdfFragment = (Fragment) fragmentManager.findFragmentByTag("");
+    private void generateIndicator(int size) {
+        radioGroup.removeAllViews();
+        if (size > 1) {
+            int radius = DisplayUtil.getPxByDp(getContext(), 8);
+            int margin = DisplayUtil.getPxByDp(getContext(), 3);
+            for (int i = 0; i < size; i++) {
+                RadioButton radioButton = new RadioButton(getContext());
+                radioButton.setId(i);
+                radioButton.setButtonDrawable(android.R.color.transparent);
+                radioButton.setBackgroundResource(R.drawable.indicator_selector);
+                radioButton.setClickable(false);
+                RadioGroup.LayoutParams lp = new RadioGroup.LayoutParams(radius, radius);
+                lp.setMargins(margin, margin, margin, margin);
+                radioGroup.addView(radioButton, lp);
+            }
+            radioGroup.clearCheck();
+            radioGroup.check(0);
+        }
     }
+
+
 }

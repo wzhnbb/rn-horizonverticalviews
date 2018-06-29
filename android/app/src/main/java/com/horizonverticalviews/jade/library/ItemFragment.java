@@ -165,6 +165,7 @@ public class ItemFragment extends Fragment {
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
+            System.out.println(container+"========================"+position);
             View view = mLayoutInflater.inflate(R.layout.recycler_item, null);
             final PhotoView imageView = (PhotoView) view.findViewById(R.id.item_img);
             imageView.setLayoutParams(new LinearLayout.LayoutParams(mScreenWidth, mScreenHeight));

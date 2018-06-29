@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import React, {PureComponent } from 'react';
 import { requireNativeComponent, View ,DeviceEventEmitter,NativeModules,UIManager} from 'react-native';
 const ReactNative = require('ReactNative');
-var  HorizonVerticalViewEventModule = UIManager.RCTAndroidHorizonVerticalView;
+// var  HorizonVerticalViewEventModule = UIManager.RCTAndroidHorizonVerticalView;
 var iface = {
     name: 'HorizonVerticalView',
     propTypes: {
@@ -39,14 +39,11 @@ export default class HorizonVertical extends PureComponent {
     componentDidMount(){
       //横向滑动
         DeviceEventEmitter.addListener('ontHorizonPageScroll', (e)=> {  
-          console.log(e)
         }); 
         //纵向滑动
         DeviceEventEmitter.addListener('onVerticalPageScroll', (e)=> {  
-          console.log(e)
         }); 
         DeviceEventEmitter.addListener('onPagePress', (e)=> {  
-          console.log(e)
           //e是原生传过来的参数  
           if(this.props.onPagePress&&typeof(this.props.onPagePress)=='function'){
             this.props.onPagePress();
@@ -62,6 +59,25 @@ export default class HorizonVertical extends PureComponent {
         );
         // console.log(NativeModules.HorizonVerticalViewEventModule);
         // HorizonVerticalViewEventModule.changeCurrent(data)
+      }
+      AotuScroll(times){
+        // this.RCTAndroidHorizonVerticalView.Commands.changeCurrent(data);
+        UIManager.dispatchViewManagerCommand(
+          this.getViewHandle(),
+          UIManager.RCTAndroidHorizonVerticalView.Commands.AotuScroll,
+          [times.toString()],
+        );
+      }
+      StopScroll(){
+        // this.RCTAndroidHorizonVerticalView.Commands.changeCurrent(data);
+        UIManager.dispatchViewManagerCommand(
+          this.getViewHandle(),
+          UIManager.RCTAndroidHorizonVerticalView.Commands.StopScroll,
+          null,
+        );
+      }
+      componentWillUnmount(){
+        DeviceEventEmitter.removeAllListeners();
       }
       render() {
         return <RCTHorizonVerticalView

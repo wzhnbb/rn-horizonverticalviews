@@ -12,7 +12,6 @@ import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.horizonverticalviews.jade.library.HorizonVerticalViewReactPackage;
-import com.horizonverticalviews.jade.library.RNUIImplementationProvider;
 
 import java.util.Arrays;
 import java.util.List;

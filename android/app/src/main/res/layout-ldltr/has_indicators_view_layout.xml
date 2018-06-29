@@ -6,7 +6,7 @@
     android:layout_weight="1"
     android:orientation="vertical">
 
-    <com.horizonverticalviews.jade.library.HorizonVerticalView
+    <com.horizonverticalviews.jade.library.HorizonVerticalView3
         android:id="@+id/horizontal_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -20,7 +20,7 @@
         android:background="@drawable/fillet_frg"
         android:gravity="center"
         android:textColor="#ffffff" />
-<!--
+
     <RadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="wrap_content"
@@ -28,5 +28,6 @@
         android:layout_gravity="center_vertical|right"
         android:layout_marginRight="10dp"
         android:gravity="center"
-        android:orientation="vertical" />-->
+        android:orientation="vertical" />
+
 </FrameLayout>
